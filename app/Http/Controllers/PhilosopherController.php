@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Philosopher;
 use App\Traits\ApiResponse;
-use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PhilosopherController extends Controller
 {
@@ -14,6 +15,22 @@ class PhilosopherController extends Controller
 
     /**
      * Display a listing of the resource.
+     * 
+     * @group Philosophers
+     * 
+     * @response 200 scenario="Success" {
+     *   "success": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "name": "Acrion",
+     *       "life": "5th/4th century BC",
+     *       "school": "Pythagorean",
+     *       "notes": "visited by Plato",
+     *     }
+     *   ]
+     * }
+     * 
      */
     public function index()
     {
@@ -22,10 +39,26 @@ class PhilosopherController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * @group Philosophers
+     * 
+     * @response 200 scenario="Success" {
+     *   "success": true,
+     *   "message": "Record stored successfully"
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "name": "Acrion",
+     *       "life": "5th/4th century BC",
+     *       "school": "Pythagorean",
+     *       "notes": "visited by Plato",
+     *     }
+     *   ]
+     * }
      */
     public function store(Request $request)
     {
-        $validated = $request->validated([
+        $validated = $request->validate([
             "name" => "string|max:255",
             "life" => "string|max:255",
             "school" => "string|max:255",
@@ -33,11 +66,9 @@ class PhilosopherController extends Controller
         ]);
 
         try {
-            $philosopher = Philosopher::create([
-                $validated
-            ]);
+            $philosopher = Philosopher::create($validated);
     
-            return response()->json($philosopher, "Record stored successfully");
+            return $this->success($philosopher, "Record stored successfully");
         } catch (Exception $e) {
             return $this->error(message: $e);
         }
@@ -47,6 +78,22 @@ class PhilosopherController extends Controller
 
     /**
      * Display the specified resource.
+     * 
+     * @group Philosophers
+     * 
+     * 
+     * @response 200 scenario="Success" {
+     *   "success": true,
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "name": "Acrion",
+     *       "life": "5th/4th century BC",
+     *       "school": "Pythagorean",
+     *       "notes": "visited by Plato",
+     *     }
+     *   ]
+     * }
      */
     public function show(Philosopher $philosopher)
     {
@@ -55,10 +102,26 @@ class PhilosopherController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @group Philosophers
+     * 
+     * @response 200 scenario="Success" {
+     *   "success": true,
+     *   "message": "Record updated successfully"
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "name": "Acrion",
+     *       "life": "5th/4th century BC",
+     *       "school": "Pythagorean",
+     *       "notes": "visited by Plato",
+     *     }
+     *   ]
+     * }
      */
     public function update(Request $request, Philosopher $philosopher)
     {
-        $validated = $request->validated([
+        $validated = $request->validate([
             "name" => "string|max:255",
             "life" => "string|max:255",
             "school" => "string|max:255",
@@ -76,6 +139,9 @@ class PhilosopherController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * @group Philosophers
+     * 
      */
     public function destroy(Philosopher $philosopher)
     {
